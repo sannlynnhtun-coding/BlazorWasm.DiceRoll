@@ -1,0 +1,97 @@
+﻿@page "/"
+@inject IJSRuntime JSRuntime
+
+<div class="container">
+    <div class="dice-wrapper">
+        @if (rolling)
+        {
+            if (rollingCount == 1)
+            {
+                <img id="die-1" class="shake" src="images/dice-@(result1.ToString().PadLeft(2, '0')).svg">
+                <img id="die-2" class="shake" src="images/dice-@(result2.ToString().PadLeft(2, '0')).svg">
+                <img id="die-3" class="shake" src="images/dice-@(result3.ToString().PadLeft(2, '0')).svg">
+            }
+            else if (rollingCount == 2)
+            {
+                <img id="die-1" class="shake" src="images/dice-@(result1.ToString().PadLeft(2, '0')).svg">
+                <img id="die-2" class="shake" src="images/dice-@(result2.ToString().PadLeft(2, '0')).svg">
+                <img id="die-3" class="shake" src="images/dice-@(result3.ToString().PadLeft(2, '0')).svg">
+            }
+            else if (rollingCount == 3)
+            {
+                <img id="die-1" class="shake" src="images/dice-@(result1.ToString().PadLeft(2, '0')).svg">
+                <img id="die-2" class="shake" src="images/dice-@(result2.ToString().PadLeft(2, '0')).svg">
+                <img id="die-3" class="shake" src="images/dice-@(result3.ToString().PadLeft(2, '0')).svg">
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                int result = currentRolls[i] == 0 ? 1 : currentRolls[i];
+                <img id="die-@(i + 1)" class="@(rolling ? "shake" : "")" src="images/dice-@(result.ToString().PadLeft(2, '0')).svg">
+            }
+        }
+    </div>
+    <p id="total">Your roll is @total</p>
+    <button @onclick="RollDice">ROLL THE DICE</button>
+</div>
+
+@code {
+    private int[] currentRolls = new int[3];
+    bool rolling = false;
+    int result1 = 0;
+    int result2 = 0;
+    int result3 = 0;
+    int rollingCount = 1;
+    int total = 0;
+
+    private async Task RollDice()
+    {
+        total = 0;
+        var random = new Random();
+        currentRolls = new int[3];
+        rolling = true;
+        for (int i = 0; i < 10; i++)
+        {
+            result1 = random.Next(1, 7);
+            result2 = random.Next(1, 7);
+            result3 = random.Next(1, 7);
+
+            rollingCount = random.Next(1, 4);
+            StateHasChanged();
+            await Task.Delay(100);
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            currentRolls[i] = random.Next(1, 7);
+            if (i == 3 - 1)
+            {
+                break;
+            }
+        }
+
+        total = currentRolls.ToList().Sum();
+
+        rolling = false;
+    }
+
+    public string NumberToWord(int number)
+    {
+        switch (number)
+        {
+            case 1: return "one";
+            case 2: return "two";
+            case 3: return "three";
+            case 4: return "four";
+            case 5: return "five";
+            case 6: return "six";
+            case 7: return "seven";
+            case 8: return "eight";
+            case 9: return "nine";
+            case 0:
+            default: return "";
+        }
+    }
+}
