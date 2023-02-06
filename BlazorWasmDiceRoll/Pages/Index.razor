@@ -46,6 +46,14 @@
     int rollingCount = 1;
     int total = 0;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            currentRolls = new int[3] { 6, 6, 6 };
+        }
+    }
+
     private async Task RollDice()
     {
         total = 0;
